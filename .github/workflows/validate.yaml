@@ -1,3 +1,4 @@
+# WIP
 name: Validate pull request
 
 on:
@@ -16,24 +17,15 @@ jobs:
     steps:      
       - name: Install SGD
         run: echo y | sf plugins install "sfdx-git-delta@${{ vars.SGD_VERSION }}"
-
       - name: 'Checkout source code'
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
           ref: ${{ github.head_ref }}
-
-      - name: 'Ensure full Git history is available'
-        run: |
-          git fetch --unshallow
-          git fetch origin +refs/heads/*:refs/remotes/origin/*
-          git branch --force main origin/main
-          git branch --show-current  # Debugging: Show current branch
-
-      - name: 'Create delta packages for new, modified, or deleted metadata'
+      - name: 'Create delta packages for new, modified or deleted metadata'
         run: | 
             mkdir changed-sources
-            sf sgd source delta --to "HEAD" --from "origin/${{ github.base_ref }}" --output-dir "." --generate-delta --source-dir force-app/
+            sf sgd source delta --to "HEAD" --from "${{ github.base_ref }}" --output-dir "." --generate-delta --source-dir force-app/
       
       - name: 'Authenticate using SFDX_AUTH_URL'
         run: | 
