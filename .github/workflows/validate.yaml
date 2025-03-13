@@ -22,10 +22,13 @@ jobs:
         with:
           fetch-depth: 0
           ref: ${{ github.head_ref }}
+      - name: 'Fetch additional Git branches'
+        run: | 
+            git fetch origin +refs/heads/main:refs/remotes/origin/main
       - name: 'Create delta packages for new, modified or deleted metadata'
         run: | 
             mkdir changed-sources
-            sf sgd source delta --to "HEAD" --from "${{ github.base_ref }}" --output-dir "." --generate-delta --source-dir force-app/
+            sf sgd source delta --to "HEAD" --from "origin/main" --output-dir "." --generate-delta --source-dir force-app/
       
       - name: 'Authenticate using SFDX_AUTH_URL'
         run: | 
